@@ -209,9 +209,11 @@ function calculate(diceSet, currentScore = 0) {
         ];
       })
       .sort((a, b) => b[0] - a[0]);
-    return `Take ${expectationOptions[0][3]} (+${expectationOptions[0][4]} Ex:+${Math.round(
-      expectationOptions[0][0]
-    )}) and ${expectationOptions[0][2] ? "continue rolling" : "bank"}.`;
+    return `Take ${expectationOptions[0][3]} (+${
+      expectationOptions[0][4]
+    } Ex:+${Math.round(expectationOptions[0][0])}) and ${
+      expectationOptions[0][2] ? "continue rolling" : "bank"
+    }.`;
   }
 }
 
@@ -233,173 +235,170 @@ function diceDifferenceByCount(diceA, diceB) {
   return result.sort((a, b) => a - b);
 }
 
-globalThis.addEventListener("DOMContentLoaded", () => {
-  // State
-  let selectedDice = [];
-  let currentScore = 0;
+// State
+let selectedDice = [];
+let currentScore = 0;
 
-  // DOM Elements
-  const diceButtons = document.querySelectorAll(".dice-button");
-  const selectedDiceDisplay = document.getElementById("selectedDice");
-  const diceCountDisplay = document.getElementById("diceCount");
-  const clearButton = document.getElementById("clearButton");
-  const scoreInput = document.getElementById("scoreInput");
-  const increaseScoreBtn = document.getElementById("increaseScore");
-  const decreaseScoreBtn = document.getElementById("decreaseScore");
-  const calculateButton = document.getElementById("calculateButton");
-  const resultsSection = document.getElementById("resultsSection");
-  const resultsContainer = document.getElementById("resultsContainer");
+// DOM Elements
+const diceButtons = document.querySelectorAll(".dice-button");
+const selectedDiceDisplay = document.getElementById("selectedDice");
+const diceCountDisplay = document.getElementById("diceCount");
+const clearButton = document.getElementById("clearButton");
+const scoreInput = document.getElementById("scoreInput");
+const increaseScoreBtn = document.getElementById("increaseScore");
+const decreaseScoreBtn = document.getElementById("decreaseScore");
+const calculateButton = document.getElementById("calculateButton");
+const resultsSection = document.getElementById("resultsSection");
+const resultsContainer = document.getElementById("resultsContainer");
 
-  // Initialize
-  init();
+// Initialize
+init();
 
-  function init() {
-    // Dice button listeners
-    diceButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const value = parseInt(button.dataset.value);
-        handleDiceClick(value);
-      });
+function init() {
+  // Dice button listeners
+  diceButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const value = parseInt(button.dataset.value);
+      handleDiceClick(value);
     });
+  });
 
-    // Clear button
-    clearButton.addEventListener("click", clearAllDice);
+  // Clear button
+  clearButton.addEventListener("click", clearAllDice);
 
-    // Score adjustment buttons
-    increaseScoreBtn.addEventListener("click", () => adjustScore(50));
-    decreaseScoreBtn.addEventListener("click", () => adjustScore(-50));
+  // Score adjustment buttons
+  increaseScoreBtn.addEventListener("click", () => adjustScore(50));
+  decreaseScoreBtn.addEventListener("click", () => adjustScore(-50));
 
-    // Score input direct change
-    scoreInput.addEventListener("input", (e) => {
-      currentScore = Math.max(0, parseInt(e.target.value) || 0);
-      updateScoreDisplay();
-    });
-
-    // Calculate button
-    calculateButton.addEventListener("click", handleCalculate);
-
-    updateUI();
-  }
-
-  // Handle dice selection - now allows duplicates
-  function handleDiceClick(value) {
-    if (selectedDice.length < 6) {
-      // Always add the die (allows duplicates)
-      selectedDice.push(value);
-      updateUI();
-    }
-  }
-
-  // Clear all dice
-  function clearAllDice() {
-    selectedDice = [];
-    updateUI();
-  }
-
-  // Adjust score by amount
-  function adjustScore(amount) {
-    currentScore = Math.max(0, currentScore + amount);
+  // Score input direct change
+  scoreInput.addEventListener("input", (e) => {
+    currentScore = Math.max(0, parseInt(e.target.value) || 0);
     updateScoreDisplay();
-  }
+  });
 
-  // Update score display
-  function updateScoreDisplay() {
-    scoreInput.value = currentScore;
-    decreaseScoreBtn.disabled = currentScore < 50;
-  }
+  // Calculate button
+  calculateButton.addEventListener("click", handleCalculate);
 
-  // Update UI
-  function updateUI() {
-    // Update selected dice display
-    if (selectedDice.length === 0) {
-      selectedDiceDisplay.innerHTML =
-        '<span class="empty-state">No dice selected</span>';
-    } else {
-      selectedDiceDisplay.innerHTML = selectedDice
-        .map(
-          (die, index) => `
+  updateUI();
+}
+
+// Handle dice selection - now allows duplicates
+function handleDiceClick(value) {
+  if (selectedDice.length < 6) {
+    // Always add the die (allows duplicates)
+    selectedDice.push(value);
+    updateUI();
+  }
+}
+
+// Clear all dice
+function clearAllDice() {
+  selectedDice = [];
+  updateUI();
+}
+
+// Adjust score by amount
+function adjustScore(amount) {
+  currentScore = Math.max(0, currentScore + amount);
+  updateScoreDisplay();
+}
+
+// Update score display
+function updateScoreDisplay() {
+  scoreInput.value = currentScore;
+  decreaseScoreBtn.disabled = currentScore < 50;
+}
+
+// Update UI
+function updateUI() {
+  // Update selected dice display
+  if (selectedDice.length === 0) {
+    selectedDiceDisplay.innerHTML =
+      '<span class="empty-state">No dice selected</span>';
+  } else {
+    selectedDiceDisplay.innerHTML = selectedDice
+      .map(
+        (die, index) => `
                 <div class="selected-die" onclick="removeDie(${index})" style="cursor: pointer;" title="Click to remove">
                     ${die}
                 </div>
             `
-        )
-        .join("");
+      )
+      .join("");
+  }
+
+  // Update dice count
+  diceCountDisplay.textContent = `${selectedDice.length} / 6 dice selected`;
+
+  // Enable/disable calculate button
+  calculateButton.disabled = selectedDice.length === 0;
+
+  // Update score button states
+  decreaseScoreBtn.disabled = currentScore < 50;
+
+  // Update dice button states - disable all if at limit
+  diceButtons.forEach((button) => {
+    if (selectedDice.length >= 6) {
+      button.style.opacity = "0.5";
+      button.style.cursor = "not-allowed";
+    } else {
+      button.style.opacity = "1";
+      button.style.cursor = "pointer";
     }
+  });
+}
 
-    // Update dice count
-    diceCountDisplay.textContent = `${selectedDice.length} / 6 dice selected`;
+// Remove a specific die by index
+function removeDie(index) {
+  selectedDice.splice(index, 1);
+  updateUI();
+}
 
-    // Enable/disable calculate button
-    calculateButton.disabled = selectedDice.length === 0;
+// Handle calculate button
+function handleCalculate() {
+  if (selectedDice.length === 0) return;
 
-    // Update score button states
-    decreaseScoreBtn.disabled = currentScore < 50;
-
-    // Update dice button states - disable all if at limit
-    diceButtons.forEach((button) => {
-      if (selectedDice.length >= 6) {
-        button.style.opacity = "0.5";
-        button.style.cursor = "not-allowed";
-      } else {
-        button.style.opacity = "1";
-        button.style.cursor = "pointer";
-      }
-    });
-  }
-
-  // Remove a specific die by index
-  function removeDie(index) {
-    selectedDice.splice(index, 1);
-    updateUI();
-  }
-
-  // Handle calculate button
-  function handleCalculate() {
-    if (selectedDice.length === 0) return;
-
-    // Call the calculate function (returns a string)
-    const resultString = calculate(selectedDice, currentScore);
-
-    // Display results
-    displayResults(resultString);
-  }
+  // Call the calculate function (returns a string)
+  const resultString = calculate(selectedDice, currentScore);
 
   // Display results
-  function displayResults(resultString) {
-    resultsSection.classList.add("visible");
+  displayResults(resultString);
+}
 
-    // Parse the result string and create result items
-    // For now, just display the string
-    resultsContainer.innerHTML = `
+// Display results
+function displayResults(resultString) {
+  resultsSection.classList.add("visible");
+
+  // Parse the result string and create result items
+  // For now, just display the string
+  resultsContainer.innerHTML = `
         <div class="result-item">
             <div class="result-text" style="white-space: pre-line;">${resultString}</div>
         </div>
     `;
 
-    const addButton = document.createElement('button');
-    const points = Number.parseInt(resultString.match(/\+\d+/)[0].substring(1));
-    addButton.textContent = "Add Score";
-    addButton.classList.add("add-score-button");
-    addButton.addEventListener("click", () => handleAddScore(points));
-    resultsContainer.querySelector(".result-item").appendChild(addButton);
+  const addButton = document.createElement("button");
+  const points = Number.parseInt(resultString.match(/\+\d+/)[0].substring(1));
+  addButton.textContent = "Add Score";
+  addButton.classList.add("add-score-button");
+  addButton.addEventListener("click", () => handleAddScore(points));
+  resultsContainer.querySelector(".result-item").appendChild(addButton);
 
-    // Scroll to results
-    resultsSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
+  // Scroll to results
+  resultsSection.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
 
-  // Add score handler (to be called by dynamically created buttons)
-  function handleAddScore(points) {
-    currentScore += points;
-    updateScoreDisplay();
+// Add score handler (to be called by dynamically created buttons)
+function handleAddScore(points) {
+  currentScore += points;
+  updateScoreDisplay();
 
-    // Clear current dice and set to remaining
-    clearAllDice();
+  // Clear current dice and set to remaining
+  clearAllDice();
 
-    // If there are remaining dice, we'd need to handle that
-    // For now, just clear everything
+  // If there are remaining dice, we'd need to handle that
+  // For now, just clear everything
 
-    // Hide results
-    resultsSection.classList.remove("visible");
-
-  }
-});
+  // Hide results
+  resultsSection.classList.remove("visible");
+}
