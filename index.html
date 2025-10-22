@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zilch Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Zilch Calculator</h1>
+
+        <!-- Dice Selection Section -->
+        <div class="section">
+            <div class="section-title">Select Dice (up to 6)</div>
+            <div class="dice-grid">
+                <button class="dice-button" data-value="1">1</button>
+                <button class="dice-button" data-value="2">2</button>
+                <button class="dice-button" data-value="3">3</button>
+                <button class="dice-button" data-value="4">4</button>
+                <button class="dice-button" data-value="5">5</button>
+                <button class="dice-button" data-value="6">6</button>
+            </div>
+            
+            <div class="selected-dice" id="selectedDice">
+                <span class="empty-state">No dice selected</span>
+            </div>
+            <div class="dice-count" id="diceCount">0 / 6 dice selected</div>
+            
+            <button class="clear-button" id="clearButton">Clear All Dice</button>
+        </div>
+
+        <!-- Score Input Section -->
+        <div class="section">
+            <div class="section-title">Current Score</div>
+            <div class="score-input-group">
+                <div class="score-controls">
+                    <button class="score-adjust-button" id="decreaseScore">−</button>
+                    <input 
+                        type="number" 
+                        id="scoreInput" 
+                        class="score-input" 
+                        value="0" 
+                        min="0"
+                        placeholder="0"
+                    >
+                    <button class="score-adjust-button" id="increaseScore">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculate Button -->
+        <button class="calculate-button" id="calculateButton" disabled>
+            Calculate Options
+        </button>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            <div class="section-title">Scoring Options</div>
+            <div id="resultsContainer">
+                <!-- Results will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
